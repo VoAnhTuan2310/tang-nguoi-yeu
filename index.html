@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chúc Mừng Sinh Nhật Em</title>
+    <style>
+        body { background: #1a1a1a; color: white; font-family: 'Segoe UI', Tahoma; text-align: center; margin: 0; }
+        .heart { position: fixed; top: -1vh; transform: translateY(0); animation: fall 3s linear forwards; color: #ff4d4d; }
+        @keyframes fall { to { transform: translateY(105vh); } }
+        .content { padding: 50px 20px; z-index: 1; position: relative; }
+        img { width: 80%; max-width: 300px; border-radius: 15px; border: 3px solid #ff4d4d; margin: 15px; }
+        h1 { color: #ff4d4d; font-size: 2.5em; }
+        p { font-size: 1.2em; line-height: 1.6; max-width: 600px; margin: 0 auto; }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <h1>Happy Birthday My Love! ❤️</h1>
+        <p>Khoảng cách tính bằng km, nhưng tình yêu tính bằng nhịp đập...</p>
+        
+        <img src="https://via.placeholder.com/300" alt="Ảnh kỷ niệm 1">
+        <img src="https://via.placeholder.com/300" alt="Ảnh kỷ niệm 2">
+        
+        <p style="margin-top: 30px;">"Dù mình yêu xa, nhưng em hãy tin rằng..."</p>
+    </div>
+
+    <script>
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 2 + 3 + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => { heart.remove(); }, 5000);
+        }
+        setInterval(createHeart, 300);
+    </script>
+</body>
+</html>
