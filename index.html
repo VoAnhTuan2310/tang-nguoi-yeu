@@ -2,129 +2,76 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Happy Birthday Cún Iuuu ❤️</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500&display=swap');
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body { 
-            background: #000;
-            overflow: hidden; 
-            font-family: 'Quicksand', sans-serif;
-            width: 100vw;
-            height: 100vh;
-        }
-
-        /* Khung thông báo xoay ngang - Fix cứng cho mobile */
+        body { background: #000; overflow: hidden; font-family: 'Quicksand', sans-serif; width: 100vw; height: 100vh; }
         #rotate-notice {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: #000; color: #fff; display: flex; flex-direction: column;
             justify-content: center; align-items: center; z-index: 9999;
-            padding: 20px; text-align: center;
         }
-        .phone-icon { 
-            width: 40px; height: 70px; border: 3px solid #ff4d4d; border-radius: 6px; 
-            animation: rotateDevice 2s infinite; position: relative; margin-bottom: 20px;
-        }
-        .phone-icon::after {
-            content: ''; position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%);
-            width: 8px; height: 8px; border: 1px solid #ff4d4d; border-radius: 50%;
-        }
-        @keyframes rotateDevice {
-            0% { transform: rotate(0deg); }
-            50% { transform: rotate(90deg); }
-            100% { transform: rotate(90deg); }
-        }
-
-        /* Khung chứa nội dung chính - Căn giữa tuyệt đối */
-        #main-wrapper {
-            display: none;
-            width: 100vw;
-            height: 100vh;
-            position: relative;
-            justify-content: center;
-            align-items: center;
-        }
-
-        canvas { position: absolute; top: 0; left: 0; }
-        
+        #main-wrapper { display: none; width: 100vw; height: 100vh; position: relative; }
+        canvas { position: absolute; top: 0; left: 0; display: block; }
         #text-overlay {
-            position: relative;
-            z-index: 10;
-            width: 85%;
-            pointer-events: none;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 10; width: 90%; pointer-events: none; text-align: center;
         }
-        
         .message { 
-            font-family: 'Dancing Script', cursive;
-            font-size: clamp(1.8rem, 8vw, 3.5rem); /* Tự động co giãn theo cỡ màn hình */
-            color: #ffffff;
-            text-shadow: 0 0 15px rgba(255, 255, 255, 0.9), 0 0 30px rgba(255, 105, 180, 0.6);
-            line-height: 1.4;
+            font-family: 'Dancing Script', cursive; font-size: clamp(1.8rem, 8vw, 3.5rem); 
+            color: #ffffff; text-shadow: 0 0 15px rgba(255, 255, 255, 0.9); line-height: 1.4;
         }
-
-        /* Hiện nội dung khi xoay ngang */
-        @media screen and (orientation: landscape) {
-            #rotate-notice { display: none; }
-            #main-wrapper { display: flex; }
-        }
+        @media screen and (orientation: landscape) { #rotate-notice { display: none; } #main-wrapper { display: flex; } }
     </style>
 </head>
 <body>
-
-    <div id="rotate-notice">
-        <div class="phone-icon"></div>
-        <p>Anh Tuấn mời Cún iu xoay ngang điện thoại ❤️</p>
-    </div>
-
+    <div id="rotate-notice"><p>Mời Cún iu xoay ngang điện thoại ❤️</p></div>
     <div id="main-wrapper">
         <canvas id="canvas"></canvas>
-        <div id="text-overlay">
-            <div id="text" class="message"></div>
-        </div>
+        <div id="text-overlay"><div id="text" class="message"></div></div>
     </div>
 
     <script>
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         const textElement = document.getElementById('text');
-        
         let width, height, hearts = [], backgroundItems = [];
-        const messages = ["3", "2", "1", "Hôm nay là ngày đặc biệt của em...", "HAPPY BIRTHDAY CÚN IUUU 🎂", "Chúc em luôn xinh đẹp và hạnh phúc nhó", "Út Cún Cún :3 ❤️"];
-        let currentMsgIndex = 0;
-        let isFinalStage = false;
+        const messages = ["3", "2", "1", "Hôm nay là ngày đặc biệt của em 16/03/2006", "HAPPY BIRTHDAY CÚN IUUU 🎂", "Chúc eiu luôn xinh đẹp và hạnh phúc nhó", "Út Cún Cún ❤️"];
+        let currentMsgIndex = 0, isFinalStage = false;
 
-        function init() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-            
-            // Khởi tạo trái tim nhỏ xếp khung
+        function resize() {
+            // Xử lý bù trừ mật độ điểm ảnh cho mobile (Fix lỗi nhòe/lệch)
+            const dpr = window.devicePixelRatio || 1;
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width * dpr;
+            canvas.height = height * dpr;
+            canvas.style.width = width + 'px';
+            canvas.style.height = height + 'px';
+            ctx.scale(dpr, dpr);
+            initItems();
+        }
+
+        function initItems() {
             hearts = [];
-            for (let i = 0; i < 400; i++) {
+            for (let i = 0; i < 300; i++) {
                 hearts.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height,
-                    size: Math.random() * 12 + 10,
+                    x: Math.random() * width, y: Math.random() * height,
+                    size: Math.random() * 8 + 10,
+                    angle: (i / 300) * Math.PI * 2,
                     opacity: Math.random(),
-                    angle: (i / 400) * Math.PI * 2,
-                    drift: Math.random() * 20 - 10
+                    drift: Math.random() * 10 - 5
                 });
             }
-
-            // Vật phẩm nền
             backgroundItems = [];
-            for (let i = 0; i < 30; i++) {
+            for (let i = 0; i < 20; i++) {
                 backgroundItems.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height,
+                    x: Math.random() * width, y: Math.random() * height,
                     icon: ['🎂', '🌸', '🎁', '💖', '✨'][Math.floor(Math.random() * 5)],
-                    speed: Math.random() * 2 + 2,
-                    size: Math.random() * 20 + 15
+                    speed: Math.random() * 1.5 + 1.2,
+                    size: Math.random() * 15 + 15
                 });
             }
         }
@@ -155,10 +102,13 @@
         }
 
         function animate() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+            // Fix lỗi "vệt mưa" bằng cách xóa nền sạch sẽ hơn
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, width, height);
 
             backgroundItems.forEach(item => {
+                ctx.globalAlpha = 0.8;
                 ctx.font = `${item.size}px Arial`;
                 ctx.fillText(item.icon, item.x, item.y);
                 item.y += item.speed;
@@ -167,43 +117,39 @@
 
             hearts.forEach((h, i) => {
                 if (isFinalStage) {
-                    // Căn chỉnh tỉ lệ trái tim theo màn hình
-                    const scale = Math.min(width, height) / 30;
+                    const scale = Math.min(width, height) / 35;
                     const pos = getHeartPoint(h.angle, scale);
-                    const destX = width / 2 + pos.x + h.drift;
-                    const destY = height / 2 + pos.y + h.drift;
-                    
-                    h.x += (destX - h.x) * 0.1;
-                    h.y += (destY - h.y) * 0.1;
-                    h.opacity = 0.5 + Math.sin(Date.now() * 0.005 + i) * 0.5;
-                    ctx.shadowBlur = 15;
-                    ctx.shadowColor = "rgba(255, 105, 180, 0.8)";
+                    h.x += (width/2 + pos.x + h.drift - h.x) * 0.1;
+                    h.y += (height/2 + pos.y + h.drift - h.y) * 0.1;
+                    h.opacity = 0.6 + Math.sin(Date.now() * 0.005 + i) * 0.4;
+                    // Dùng glow nhẹ thay vì shadow nặng để mobile không lag
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = "#ff1493";
                 } else {
                     h.y += 2.5;
                     if (h.y > height) h.y = -20;
+                    ctx.shadowBlur = 0;
                 }
                 ctx.globalAlpha = h.opacity;
                 ctx.font = `${h.size}px Arial`;
                 ctx.fillText("❤️", h.x, h.y);
-                ctx.globalAlpha = 1;
-                ctx.shadowBlur = 0;
             });
-
+            ctx.globalAlpha = 1;
+            ctx.shadowBlur = 0;
             requestAnimationFrame(animate);
         }
 
-        window.addEventListener('resize', () => { init(); });
-        init();
+        window.addEventListener('resize', resize);
+        resize();
         animate();
 
         let started = false;
-        function check() {
+        setInterval(() => {
             if (window.innerWidth > window.innerHeight && !started) {
                 started = true;
                 setTimeout(startTextSequence, 500);
             }
-        }
-        setInterval(check, 400);
+        }, 400);
     </script>
 </body>
 </html>
