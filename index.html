@@ -2,40 +2,32 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Happy Birthday Cún Iuuu ❤️</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500&display=swap');
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #000; overflow: hidden; font-family: 'Quicksand', sans-serif; width: 100vw; height: 100vh; }
-        
+        body { background: #000; overflow: hidden; font-family: 'Quicksand', sans-serif; }
         #rotate-notice {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: #000; color: #fff; display: flex; flex-direction: column;
             justify-content: center; align-items: center; z-index: 9999;
         }
-
         #main-wrapper { display: none; width: 100vw; height: 100vh; position: relative; }
-        
-        canvas { position: absolute; top: 0; left: 0; display: block; }
-
+        canvas { position: absolute; top: 0; left: 0; }
         #text-overlay {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             z-index: 10; width: 90%; pointer-events: none; text-align: center;
         }
-        
         .message { 
             font-family: 'Dancing Script', cursive; font-size: clamp(1.8rem, 8vw, 3rem); 
-            color: #ffffff; text-shadow: 0 0 10px rgba(255, 255, 255, 0.8); line-height: 1.4;
-            transition: opacity 0.5s;
+            color: #fff; text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
         }
-
         @media screen and (orientation: landscape) { #rotate-notice { display: none; } #main-wrapper { display: flex; } }
     </style>
 </head>
 <body>
     <div id="rotate-notice"><p>Mời Cún iu xoay ngang điện thoại ❤️</p></div>
-    
     <div id="main-wrapper">
         <canvas id="canvas"></canvas>
         <div id="text-overlay"><div id="text" class="message"></div></div>
@@ -43,47 +35,37 @@
 
     <script>
         const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
+        const ctx = canvas.getContext('2d', { alpha: false });
         const textElement = document.getElementById('text');
         
-        let width, height, hearts = [], items = [];
-        const messages = ["3", "2", "1", "Hôm nay là ngày đặc biệt của em...", "HAPPY BIRTHDAY CÚN IUUU 🎂", "Chúc em luôn xinh đẹp và hạnh phúc nhó", "Út Cún Cún ❤️"];
+        let width, height, hearts = [], bgItems = [];
+        const messages = ["3", "2", "1", "Hôm nay là ngày đặc biệt của em...", "HAPPY BIRTHDAY CÚN IUUU 🎂", "Chúc em iu tuổi mới luôn xinh đẹp và hạnh phúc nhó", "Út Cún Cún ❤️"];
         let currentMsgIndex = 0, isFinalStage = false;
 
         function resize() {
-            // Khóa DPR ở mức 1.5 để cân bằng độ nét và tốc độ trên mobile
-            const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-            width = window.innerWidth;
-            height = window.innerHeight;
-            canvas.width = width * dpr;
-            canvas.height = height * dpr;
-            canvas.style.width = width + 'px';
-            canvas.style.height = height + 'px';
-            ctx.scale(dpr, dpr);
-            
-            // Khởi tạo lại vật thể để phù hợp kích thước mới
-            initEntities();
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            initItems();
         }
 
-        function initEntities() {
+        function initItems() {
             hearts = [];
-            // Giảm số lượng để mượt tuyệt đối nhưng tăng kích thước hạt
-            for (let i = 0; i < 200; i++) {
+            for (let i = 0; i < 150; i++) {
                 hearts.push({
                     x: Math.random() * width,
                     y: Math.random() * height,
                     size: Math.random() * 5 + 15,
-                    angle: (i / 200) * Math.PI * 2,
-                    speed: Math.random() * 1 + 2
+                    angle: (i / 150) * Math.PI * 2,
+                    v: Math.random() * 0.8 + 1.2 // Giảm tốc độ rơi hạt
                 });
             }
-            items = [];
-            for (let i = 0; i < 15; i++) {
-                items.push({
+            bgItems = [];
+            for (let i = 0; i < 12; i++) {
+                bgItems.push({
                     x: Math.random() * width,
                     y: Math.random() * height,
                     icon: ['🎂', '🌸', '🎁', '✨'][Math.floor(Math.random() * 4)],
-                    speed: Math.random() * 1 + 2
+                    v: Math.random() * 0.8 + 1.0 // Giảm tốc độ rơi icon nền
                 });
             }
         }
@@ -91,62 +73,62 @@
         function typeWriter(text, i, fnCallback) {
             if (i < text.length) {
                 textElement.innerHTML = text.substring(0, i + 1);
-                setTimeout(() => typeWriter(text, i + 1, fnCallback), 40); 
+                setTimeout(() => typeWriter(text, i + 1, fnCallback), 100); // Gõ chữ chậm lại (100ms)
             } else if (typeof fnCallback == 'function') {
-                setTimeout(fnCallback, 1000); 
+                setTimeout(fnCallback, 1000); // Nghỉ 1s giữa các câu
             }
         }
 
-        function startTextSequence() {
+        function startSequence() {
             if (currentMsgIndex < messages.length) {
                 if (currentMsgIndex === messages.length - 1) isFinalStage = true;
                 typeWriter(messages[currentMsgIndex], 0, () => {
                     currentMsgIndex++;
-                    startTextSequence();
+                    startSequence();
                 });
             }
         }
 
         function getHeartPoint(t, scale) {
-            const x = 16 * Math.pow(Math.sin(t), 3);
-            const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
-            return { x: x * scale, y: y * scale };
+            return {
+                x: 16 * Math.pow(Math.sin(t), 3) * scale,
+                y: -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) * scale
+            };
         }
 
         function animate() {
-            // Vẽ nền đen đặc để GPU xử lý nhanh nhất
             ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, width, height);
 
-            // Vẽ các biểu tượng nền
-            ctx.font = '20px Arial';
             ctx.textAlign = 'center';
-            items.forEach(item => {
+            ctx.textBaseline = 'middle';
+            
+            ctx.font = '20px Arial';
+            ctx.globalAlpha = 0.7;
+            bgItems.forEach(item => {
                 ctx.fillText(item.icon, item.x, item.y);
-                item.y += item.speed;
-                if (item.y > height + 20) item.y = -20;
+                item.y += item.v;
+                if (item.y > height + 20) {
+                    item.y = -20;
+                    item.x = Math.random() * width;
+                }
             });
 
-            // Vẽ trái tim
             ctx.font = '18px Arial';
-            const now = Date.now();
+            const time = Date.now() * 0.003;
             hearts.forEach((h, i) => {
                 if (isFinalStage) {
-                    const scale = Math.min(width, height) / 35;
+                    const scale = Math.min(width, height) / 38;
                     const pos = getHeartPoint(h.angle, scale);
-                    const destX = width / 2 + pos.x;
-                    const destY = height / 2 + pos.y;
-                    
-                    // Di chuyển mượt mà về đích
-                    h.x += (destX - h.x) * 0.1;
-                    h.y += (destY - h.y) * 0.1;
+                    // Giảm lực hút (0.05) để tụ lại từ từ, mượt mà hơn
+                    h.x += (width/2 + pos.x - h.x) * 0.05;
+                    h.y += (height/2 + pos.y - h.y) * 0.05;
+                    ctx.globalAlpha = 0.5 + Math.sin(time + i) * 0.4;
                 } else {
-                    h.y += h.speed;
+                    h.y += h.v;
                     if (h.y > height + 20) h.y = -20;
+                    ctx.globalAlpha = 0.8;
                 }
-                
-                // Hiệu ứng nhấp nháy bằng opacity (không tốn tài nguyên như shadow)
-                ctx.globalAlpha = 0.4 + Math.sin(now * 0.005 + i) * 0.4;
                 ctx.fillText("❤️", h.x, h.y);
             });
 
@@ -162,7 +144,7 @@
         setInterval(() => {
             if (window.innerWidth > window.innerHeight && !started) {
                 started = true;
-                setTimeout(startTextSequence, 500);
+                setTimeout(startSequence, 800);
             }
         }, 400);
     </script>
