@@ -3,39 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chúc Mừng Sinh Nhật Em</title>
+    <title>Happy Birthday Cún Iuuu ❤️</title>
     <style>
-        body { background: #1a1a1a; color: white; font-family: 'Segoe UI', Tahoma; text-align: center; margin: 0; }
-        .heart { position: fixed; top: -1vh; transform: translateY(0); animation: fall 3s linear forwards; color: #ff4d4d; }
-        @keyframes fall { to { transform: translateY(105vh); } }
-        .content { padding: 50px 20px; z-index: 1; position: relative; }
-        img { width: 80%; max-width: 300px; border-radius: 15px; border: 3px solid #ff4d4d; margin: 15px; }
-        h1 { color: #ff4d4d; font-size: 2.5em; }
-        p { font-size: 1.2em; line-height: 1.6; max-width: 600px; margin: 0 auto; }
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: #000; overflow: hidden; font-family: 'Quicksand', sans-serif; }
+        
+        #rotate-notice {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; color: #fff; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 9999;
+        }
+        .phone { width: 45px; height: 75px; border: 2px solid #fff; border-radius: 8px; animation: rotate 2s infinite; }
+        @keyframes rotate { 0% { transform: rotate(0deg); } 50% { transform: rotate(90deg); } 100% { transform: rotate(90deg); } }
+
+        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        
+        #text-overlay {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 10; width: 90%; pointer-events: none; text-align: center;
+        }
+        
+        .message { 
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.5rem; 
+            color: #ffffff;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.9), 0 0 30px rgba(255, 105, 180, 0.6);
+            min-height: 1.5em;
+        }
+
+        @media screen and (orientation: landscape) { #rotate-notice { display: none; } }
     </style>
 </head>
 <body>
-    <div class="content">
-        <h1>Happy Birthday My Love! ❤️</h1>
-        <p>Khoảng cách tính bằng km, nhưng tình yêu tính bằng nhịp đập...</p>
-        
-        <img src="https://via.placeholder.com/300" alt="Ảnh kỷ niệm 1">
-        <img src="https://via.placeholder.com/300" alt="Ảnh kỷ niệm 2">
-        
-        <p style="margin-top: 30px;">"Dù mình yêu xa, nhưng em hãy tin rằng..."</p>
+
+    <div id="rotate-notice">
+        <div class="phone"></div>
+        <p style="margin-top: 20px;">Anh Tuấn mời Cún iu xoay ngang điện thoại ❤️</p>
+    </div>
+
+    <canvas id="canvas"></canvas>
+    <div id="text-overlay">
+        <div id="text" class="message"></div>
     </div>
 
     <script>
-        function createHeart() {
-            const heart = document.createElement('div');
-            heart.classList.add('heart');
-            heart.innerHTML = '❤️';
-            heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.animationDuration = Math.random() * 2 + 3 + 's';
-            document.body.appendChild(heart);
-            setTimeout(() => { heart.remove(); }, 5000);
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d', { alpha: false }); // Tối ưu render
+        const textElement = document.getElementById('text');
+        
+        let width, height, hearts = [], backgroundItems = [];
+        const messages = ["3", "2", "1", "Hôm nay là ngày đặc biệt của em...", "HAPPY BIRTHDAY CÚN IUUU 🎂", "Chúc em tuổi mới luôn xinh đẹp và hạnh phúc nhó", "Út Cún Cún :3"];
+        let currentMsgIndex = 0;
+        let isFinalStage = false;
+        const icons = ['🎂', '🌸', '🎁', '💖', '✨', '🎈'];
+        const heartChar = '❤️';
+
+        function init() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            
+            hearts = [];
+            for (let i = 0; i < 350; i++) { // Giảm số lượng xuống một chút để mượt hơn
+                hearts.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    size: Math.random() * 12 + 10,
+                    opacity: Math.random(),
+                    angle: (i / 350) * Math.PI * 2,
+                    drift: Math.random() * 20 - 10
+                });
+            }
+
+            backgroundItems = [];
+            for (let i = 0; i < 30; i++) {
+                backgroundItems.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    icon: icons[Math.floor(Math.random() * icons.length)],
+                    speed: Math.random() * 3 + 2.5, // Tăng tốc độ rơi nền
+                    size: Math.random() * 20 + 15
+                });
+            }
         }
-        setInterval(createHeart, 300);
+
+        function typeWriter(text, i, fnCallback) {
+            if (i < text.length) {
+                textElement.innerHTML = text.substring(0, i + 1);
+                setTimeout(() => typeWriter(text, i + 1, fnCallback), 40); 
+            } else if (typeof fnCallback == 'function') {
+                setTimeout(fnCallback, 1000); // Đã sửa thời gian nghỉ lên 1s
+            }
+        }
+
+        function startTextSequence() {
+            if (currentMsgIndex < messages.length) {
+                if (currentMsgIndex === messages.length - 1) isFinalStage = true;
+                typeWriter(messages[currentMsgIndex], 0, () => {
+                    currentMsgIndex++;
+                    startTextSequence();
+                });
+            }
+        }
+
+        function getHeartPoint(t, scale) {
+            const x = 16 * Math.pow(Math.sin(t), 3);
+            const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+            return { x: x * scale, y: y * scale };
+        }
+
+        function animate() {
+            ctx.fillStyle = '#000'; // Không dùng alpha mờ ở đây để tránh lag
+            ctx.fillRect(0, 0, width, height);
+
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+
+            // Vẽ vật phẩm nền rơi nhanh
+            backgroundItems.forEach(item => {
+                ctx.font = `${item.size}px Arial`;
+                ctx.fillText(item.icon, item.x, item.y);
+                item.y += item.speed;
+                if (item.y > height) {
+                    item.y = -30;
+                    item.x = Math.random() * width;
+                }
+            });
+
+            hearts.forEach((h, i) => {
+                if (isFinalStage) {
+                    const pos = getHeartPoint(h.angle, 16);
+                    const destX = width / 2 + pos.x + h.drift;
+                    const destY = height / 2 + pos.y + h.drift;
+                    
+                    h.x += (destX - h.x) * 0.12;
+                    h.y += (destY - h.y) * 0.12;
+                    
+                    h.opacity = 0.6 + Math.sin(Date.now() * 0.008 + i) * 0.4;
+                    // Chỉ đổ bóng ở giai đoạn cuối để tiết kiệm tài nguyên
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = "rgba(255, 20, 147, 0.6)";
+                } else {
+                    h.y += 3.5; // Tăng tốc độ chảy ban đầu
+                    if (h.y > height) h.y = -30;
+                    ctx.shadowBlur = 0;
+                }
+                
+                ctx.globalAlpha = h.opacity;
+                ctx.font = `${h.size}px Arial`;
+                ctx.fillText(heartChar, h.x, h.y);
+                ctx.globalAlpha = 1;
+            });
+            ctx.shadowBlur = 0;
+
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', init);
+        init();
+        animate();
+
+        let started = false;
+        function check() {
+            if (window.innerWidth > window.innerHeight && !started) {
+                started = true;
+                setTimeout(startTextSequence, 500);
+            }
+        }
+        setInterval(check, 400);
     </script>
 </body>
 </html>
