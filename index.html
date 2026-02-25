@@ -20,8 +20,8 @@
             z-index: 10; width: 90%; pointer-events: none; text-align: center;
         }
         .message { 
-            font-family: 'Dancing Script', cursive; font-size: clamp(1.8rem, 8vw, 3.5rem); 
-            color: #ffffff; text-shadow: 0 0 15px rgba(255, 255, 255, 0.9); line-height: 1.4;
+            font-family: 'Dancing Script', cursive; font-size: clamp(1.8rem, 8vw, 3.2rem); 
+            color: #ffffff; text-shadow: 0 0 15px rgba(255, 255, 255, 0.8); line-height: 1.4;
         }
         @media screen and (orientation: landscape) { #rotate-notice { display: none; } #main-wrapper { display: flex; } }
     </style>
@@ -38,11 +38,10 @@
         const ctx = canvas.getContext('2d');
         const textElement = document.getElementById('text');
         let width, height, hearts = [], backgroundItems = [];
-        const messages = ["3", "2", "1", "Hôm nay là ngày đặc biệt của em 16/03/2006", "HAPPY BIRTHDAY CÚN IUUU 🎂", "Chúc eiu luôn xinh đẹp và hạnh phúc nhó", "Út Cún Cún ❤️"];
+        const messages = ["3", "2", "1", "Hôm nay là ngày đặc biệt của em...", "HAPPY BIRTHDAY CÚN IUUU 🎂", "Chúc em luôn xinh đẹp và hạnh phúc nhó", "Út Cún Cún :3 ❤️"];
         let currentMsgIndex = 0, isFinalStage = false;
 
         function resize() {
-            // Xử lý bù trừ mật độ điểm ảnh cho mobile (Fix lỗi nhòe/lệch)
             const dpr = window.devicePixelRatio || 1;
             width = window.innerWidth;
             height = window.innerHeight;
@@ -70,8 +69,8 @@
                 backgroundItems.push({
                     x: Math.random() * width, y: Math.random() * height,
                     icon: ['🎂', '🌸', '🎁', '💖', '✨'][Math.floor(Math.random() * 5)],
-                    speed: Math.random() * 1.5 + 1.2,
-                    size: Math.random() * 15 + 15
+                    speed: Math.random() * 1.5 + 1.5,
+                    size: Math.random() * 18 + 15
                 });
             }
         }
@@ -102,7 +101,7 @@
         }
 
         function animate() {
-            // Fix lỗi "vệt mưa" bằng cách xóa nền sạch sẽ hơn
+            // Xóa sạch để hết sọc dọc
             ctx.clearRect(0, 0, width, height);
             ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, width, height);
@@ -110,6 +109,7 @@
             backgroundItems.forEach(item => {
                 ctx.globalAlpha = 0.8;
                 ctx.font = `${item.size}px Arial`;
+                ctx.textAlign = "center";
                 ctx.fillText(item.icon, item.x, item.y);
                 item.y += item.speed;
                 if (item.y > height + 20) { item.y = -20; item.x = Math.random() * width; }
@@ -117,16 +117,15 @@
 
             hearts.forEach((h, i) => {
                 if (isFinalStage) {
-                    const scale = Math.min(width, height) / 35;
+                    const scale = Math.min(width, height) / 38;
                     const pos = getHeartPoint(h.angle, scale);
-                    h.x += (width/2 + pos.x + h.drift - h.x) * 0.1;
-                    h.y += (height/2 + pos.y + h.drift - h.y) * 0.1;
+                    h.x += (width/2 + pos.x + h.drift - h.x) * 0.12;
+                    h.y += (height/2 + pos.y + h.drift - h.y) * 0.12;
                     h.opacity = 0.6 + Math.sin(Date.now() * 0.005 + i) * 0.4;
-                    // Dùng glow nhẹ thay vì shadow nặng để mobile không lag
-                    ctx.shadowBlur = 10;
+                    ctx.shadowBlur = 12;
                     ctx.shadowColor = "#ff1493";
                 } else {
-                    h.y += 2.5;
+                    h.y += 3;
                     if (h.y > height) h.y = -20;
                     ctx.shadowBlur = 0;
                 }
