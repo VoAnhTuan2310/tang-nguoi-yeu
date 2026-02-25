@@ -2,151 +2,66 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Happy Birthday Cún Iuuu ❤️</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500&display=swap');
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #000; overflow: hidden; font-family: 'Quicksand', sans-serif; }
-        #rotate-notice {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #000; color: #fff; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 9999;
-        }
-        #main-wrapper { display: none; width: 100vw; height: 100vh; position: relative; }
-        canvas { position: absolute; top: 0; left: 0; }
-        #text-overlay {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            z-index: 10; width: 90%; pointer-events: none; text-align: center;
-        }
-        .message { 
-            font-family: 'Dancing Script', cursive; font-size: clamp(1.8rem, 8vw, 3rem); 
-            color: #fff; text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-        }
-        @media screen and (orientation: landscape) { #rotate-notice { display: none; } #main-wrapper { display: flex; } }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Màn hình khóa tình yêu ❤️</title>
+    <link rel="stylesheet" href="style_index.css">
 </head>
 <body>
-    <div id="rotate-notice"><p>Mời Cún iu xoay ngang điện thoại ❤️</p></div>
-    <div id="main-wrapper">
-        <canvas id="canvas"></canvas>
-        <div id="text-overlay"><div id="text" class="message"></div></div>
+    <div class="floating-icons" id="iconsContainer"></div>
+
+    <div class="main-card">
+        <div class="image-section">
+            <img src="img/cun1.jpg" alt="Cún Iuuu" class="side-photo">
+        </div>
+
+        <div class="password-section">
+            <p class="title-text">Nhập ngày sinh của bạn...</p>
+            <input type="password" id="passInput" class="pass-display" placeholder="••••••" readonly>
+            
+            <div class="keypad">
+                <script>
+                    // Tự động tạo nút từ 1 đến 9
+                    for(let i=1; i<=9; i++) document.write(`<div class="key" onclick="addNumber(${i})">${i}</div>`);
+                </script>
+                <div class="key btn-clear" onclick="clearPass()">C</div>
+                <div class="key" onclick="addNumber(0)">0</div>
+                <div class="key btn-check" onclick="checkPass()">✓</div>
+            </div>
+        </div>
     </div>
 
     <script>
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d', { alpha: false });
-        const textElement = document.getElementById('text');
-        
-        let width, height, hearts = [], bgItems = [];
-        const messages = ["3", "2", "1", "Hôm nay là ngày đặc biệt của em...", "HAPPY BIRTHDAY CÚN IUUU 🎂", "Chúc em iu tuổi mới luôn xinh đẹp và hạnh phúc nhó", "Út Cún Cún ❤️"];
-        let currentMsgIndex = 0, isFinalStage = false;
+        let correctPass = "160306"; // Ngày sinh của Út Cún Cún
 
-        function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-            initItems();
+        function addNumber(n) { 
+            const input = document.getElementById('passInput');
+            if(input.value.length < 6) input.value += n; 
         }
-
-        function initItems() {
-            hearts = [];
-            for (let i = 0; i < 150; i++) {
-                hearts.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height,
-                    size: Math.random() * 5 + 15,
-                    angle: (i / 150) * Math.PI * 2,
-                    v: Math.random() * 0.8 + 1.2 // Giảm tốc độ rơi hạt
-                });
-            }
-            bgItems = [];
-            for (let i = 0; i < 12; i++) {
-                bgItems.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height,
-                    icon: ['🎂', '🌸', '🎁', '✨'][Math.floor(Math.random() * 4)],
-                    v: Math.random() * 0.8 + 1.0 // Giảm tốc độ rơi icon nền
-                });
+        function clearPass() { document.getElementById('passInput').value = ""; }
+        function checkPass() {
+            if(document.getElementById('passInput').value === correctPass) {
+                window.location.href = 'card.html'; 
+            } else {
+                alert("Sai ngày sinh rồi Cún iuuu!");
+                clearPass();
             }
         }
 
-        function typeWriter(text, i, fnCallback) {
-            if (i < text.length) {
-                textElement.innerHTML = text.substring(0, i + 1);
-                setTimeout(() => typeWriter(text, i + 1, fnCallback), 100); // Gõ chữ chậm lại (100ms)
-            } else if (typeof fnCallback == 'function') {
-                setTimeout(fnCallback, 1000); // Nghỉ 1s giữa các câu
+        // Hiệu ứng icon bay từ dưới lên
+        function createIcons() {
+            const container = document.getElementById('iconsContainer');
+            const icons = ['❤️', '🎂', '💖', '✨', '🌸'];
+            for (let i = 0; i < 30; i++) {
+                let span = document.createElement('span');
+                span.innerText = icons[Math.floor(Math.random() * icons.length)];
+                span.style.left = Math.random() * 100 + 'vw';
+                span.style.animationDuration = (Math.random() * 3 + 5) + 's';
+                span.style.opacity = Math.random();
+                span.className = 'floating-icon';
+                container.appendChild(span);
             }
         }
-
-        function startSequence() {
-            if (currentMsgIndex < messages.length) {
-                if (currentMsgIndex === messages.length - 1) isFinalStage = true;
-                typeWriter(messages[currentMsgIndex], 0, () => {
-                    currentMsgIndex++;
-                    startSequence();
-                });
-            }
-        }
-
-        function getHeartPoint(t, scale) {
-            return {
-                x: 16 * Math.pow(Math.sin(t), 3) * scale,
-                y: -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) * scale
-            };
-        }
-
-        function animate() {
-            ctx.fillStyle = '#000';
-            ctx.fillRect(0, 0, width, height);
-
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            
-            ctx.font = '20px Arial';
-            ctx.globalAlpha = 0.7;
-            bgItems.forEach(item => {
-                ctx.fillText(item.icon, item.x, item.y);
-                item.y += item.v;
-                if (item.y > height + 20) {
-                    item.y = -20;
-                    item.x = Math.random() * width;
-                }
-            });
-
-            ctx.font = '18px Arial';
-            const time = Date.now() * 0.003;
-            hearts.forEach((h, i) => {
-                if (isFinalStage) {
-                    const scale = Math.min(width, height) / 38;
-                    const pos = getHeartPoint(h.angle, scale);
-                    // Giảm lực hút (0.05) để tụ lại từ từ, mượt mà hơn
-                    h.x += (width/2 + pos.x - h.x) * 0.05;
-                    h.y += (height/2 + pos.y - h.y) * 0.05;
-                    ctx.globalAlpha = 0.5 + Math.sin(time + i) * 0.4;
-                } else {
-                    h.y += h.v;
-                    if (h.y > height + 20) h.y = -20;
-                    ctx.globalAlpha = 0.8;
-                }
-                ctx.fillText("❤️", h.x, h.y);
-            });
-
-            ctx.globalAlpha = 1;
-            requestAnimationFrame(animate);
-        }
-
-        window.addEventListener('resize', resize);
-        resize();
-        animate();
-
-        let started = false;
-        setInterval(() => {
-            if (window.innerWidth > window.innerHeight && !started) {
-                started = true;
-                setTimeout(startSequence, 800);
-            }
-        }, 400);
+        createIcons();
     </script>
 </body>
 </html>

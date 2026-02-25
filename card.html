@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thiệp Chúc Mừng ❤️</title>
+    <link rel="stylesheet" href="style_card.css">
+</head>
+<body>
+    <div class="floating-icons" id="iconsContainer"></div>
+
+    <div class="container">
+        <h1 class="main-title">_CHÚC MỪNG SINH NHẬT CÔNG CHÚA!_</h1>
+        <p class="sub-title">Út Cún Cún ❤️</p>
+
+        <div class="card-wrapper" onclick="this.classList.toggle('open')">
+            <div class="card-inside">
+                <div class="wish-content">
+                    <p class="wish-head">(HAPPY BIRTHDAY)</p>
+                    <p>Chúc mừng sinh nhật công chúa,</p>
+                    <p>Chúc em có một ngày snzz,</p>
+                    <p>Yêu anh thật là nhiều..</p>
+                    <p>Chúc em có được tất cả.</p>
+                    <p>Chúc em luôn vui vẻ, hạnh phúc ❤️</p>
+                    <p>Chúc em luôn xinh đẹp, đáng yêu.</p>
+                </div>
+            </div>
+            <div class="card-cover">
+                <img src="img/ut.jpg" alt="Cún Iuuu">
+                <div class="tap-hint">Chạm để mở thư nè ❤️</div>
+            </div>
+        </div>
+
+        <button class="btn-open-gift" onclick="window.location.href='gallery.html'">
+            MỞ QUÀ NÈ
+        </button>
+    </div>
+
+    <script>
+        function createIcons() {
+            const container = document.getElementById('iconsContainer');
+            const icons = ['❤️', '🎂', '💖', '✨', '🌸', '🍓'];
+            for (let i = 0; i < 25; i++) {
+                let span = document.createElement('span');
+                span.innerText = icons[Math.floor(Math.random() * icons.length)];
+                span.style.left = Math.random() * 100 + 'vw';
+                span.style.animationDuration = (Math.random() * 3 + 5) + 's';
+                span.style.opacity = Math.random();
+                span.className = 'floating-icon';
+                container.appendChild(span);
+            }
+        }
+        createIcons();
+    </script>
+</body>
+</html>

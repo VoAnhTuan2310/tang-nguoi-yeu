@@ -1,0 +1,93 @@
+/* style_card.css */
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap');
+
+body {
+    background: #ffafbd;
+    background: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Quicksand', sans-serif;
+    margin: 0;
+    overflow: hidden;
+}
+
+.container { text-align: center; width: 100%; z-index: 10; }
+
+.main-title { color: #d63384; font-size: 1.8rem; margin-bottom: 5px; }
+.sub-title { color: white; font-weight: bold; margin-bottom: 25px; }
+
+/* Cấu trúc thiệp mở đôi */
+.card-wrapper {
+    width: 300px;
+    height: 400px;
+    margin: 0 auto;
+    position: relative;
+    cursor: pointer;
+    perspective: 1500px;
+}
+
+/* Nội dung bên trong (Mặt sau) */
+.card-inside {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.wish-content { color: #d63384; padding: 20px; line-height: 1.6; }
+.wish-head { font-weight: bold; font-size: 1.2rem; margin-bottom: 15px; }
+
+/* Bìa thiệp (Mặt trước chứa ảnh) */
+.card-cover {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    border-radius: 15px;
+    transition: transform 1s ease;
+    transform-origin: left; /* Mở sang trái */
+    z-index: 2;
+    overflow: hidden;
+    backface-visibility: hidden;
+}
+
+.card-wrapper.open .card-cover {
+    transform: rotateY(-130deg); /* Góc mở thiệp */
+}
+
+.card-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.tap-hint {
+    position: absolute;
+    bottom: 0; width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    color: white; padding: 10px 0;
+    font-size: 0.9rem;
+}
+
+/* Nút bấm */
+.btn-open-gift {
+    background: #d63384;
+    color: white;
+    border: none;
+    padding: 12px 35px;
+    border-radius: 25px;
+    font-weight: bold;
+    margin-top: 30px;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(214, 51, 132, 0.4);
+}
+
+.floating-icon { position: absolute; bottom: -50px; animation: moveUp 6s linear infinite; }
+@keyframes moveUp { 100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; } }

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dòng Chảy Kỷ Niệm 30 Ảnh ❤️</title>
+    <link rel="stylesheet" href="style_gallery.css">
+</head>
+<body>
+    <div class="gallery-container" id="gallery">
+        <h1 class="gallery-header"</h1>
+    </div>
+
+    <script>
+        // Anh Tuấn liệt kê đủ 30 ảnh của bạn ở đây
+        const photoList = [
+            'img/cun1.jpg', 'img/cun2.jpg', 'img/cun3.jpg', 'img/cun4.jpg', 'img/cun5.jpg',
+            'img/cun6.jpg', 'img/cun7.jpg', 'img/cun8.jpg', 'img/cun9.jpg', 'img/cun10.jpg',
+            'img/cun11.jpg', 'img/cun12.jpg', 'img/cun13.jpg', 'img/cun14.jpg', 'img/cun15.jpg',
+            'img/cun16.jpg', 'img/cun17.jpg', 'img/cun18.jpg', 'img/cun19.jpg', 'img/cun20.jpg',
+            'img/cun21.jpg', 'img/cun22.jpg', 'img/cun23.jpg', 'img/cun24.jpg', 'img/cun25.jpg',
+            'img/cun26.jpg', 'img/cun27.jpg', 'img/cun28.jpg', 'img/cun29.jpg', 'img/cun30.jpg'
+        ];
+
+        const gallery = document.getElementById('gallery');
+
+        // Tạo ra khoảng 100 thực thể ảnh từ 30 ảnh gốc để dòng chảy không bao giờ dứt
+        function spawnDensePhotos() {
+            for (let i = 0; i < 100; i++) {
+                const src = photoList[i % photoList.length];
+                const img = document.createElement('img');
+                img.src = src;
+                img.className = 'floating-photo';
+                
+                // Rải đều từ trên xuống dưới (0% - 88%)
+                img.style.top = `${Math.random() * 88}%`;
+
+                // Độ trễ ngẫu nhiên rộng để ảnh gối đầu nhau liên tục
+                img.style.animationDelay = `${Math.random() * 50}s`;
+
+                // Tốc độ trôi từ 20s đến 35s (tạo hiệu ứng xa gần)
+                img.style.animationDuration = `${Math.random() * 15 + 20}s`;
+
+                // Độ nghiêng lộn xộn nghệ thuật
+                img.style.transform = `rotate(${Math.random() * 40 - 20}deg)`;
+
+                gallery.appendChild(img);
+            }
+        }
+
+        spawnDensePhotos();
+    </script>
+</body>
+</html>

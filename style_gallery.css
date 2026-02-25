@@ -1,0 +1,18 @@
+/* --- CSS CHO TRANG GALLERY --- */
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
+body { background: #ffafbd; margin: 0; overflow: hidden; }
+.gallery-header {
+    position: absolute; z-index: 100; width: 100%; text-align: center;
+    font-family: 'Dancing Script', cursive; font-size: 3rem; color: white; top: 20px;
+}
+.floating-photo {
+    position: absolute; left: -250px; width: 160px; border: 6px solid white;
+    border-bottom-width: 25px; border-radius: 5px; background: white;
+    animation: flowToRight linear infinite; box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+@keyframes flowToRight {
+    0% { left: -250px; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { left: 110vw; opacity: 0; }
+}
