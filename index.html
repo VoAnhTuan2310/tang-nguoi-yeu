@@ -8,26 +8,34 @@
         @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500&display=swap');
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #000; overflow: hidden; font-family: 'Quicksand', sans-serif; width: 100vw; height: 100vh; }
+        
         #rotate-notice {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: #000; color: #fff; display: flex; flex-direction: column;
             justify-content: center; align-items: center; z-index: 9999;
         }
+
         #main-wrapper { display: none; width: 100vw; height: 100vh; position: relative; }
+        
         canvas { position: absolute; top: 0; left: 0; display: block; }
+
         #text-overlay {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             z-index: 10; width: 90%; pointer-events: none; text-align: center;
         }
+        
         .message { 
-            font-family: 'Dancing Script', cursive; font-size: clamp(1.8rem, 8vw, 3.2rem); 
-            color: #ffffff; text-shadow: 0 0 15px rgba(255, 255, 255, 0.8); line-height: 1.4;
+            font-family: 'Dancing Script', cursive; font-size: clamp(1.8rem, 8vw, 3rem); 
+            color: #ffffff; text-shadow: 0 0 10px rgba(255, 255, 255, 0.8); line-height: 1.4;
+            transition: opacity 0.5s;
         }
+
         @media screen and (orientation: landscape) { #rotate-notice { display: none; } #main-wrapper { display: flex; } }
     </style>
 </head>
 <body>
     <div id="rotate-notice"><p>Mời Cún iu xoay ngang điện thoại ❤️</p></div>
+    
     <div id="main-wrapper">
         <canvas id="canvas"></canvas>
         <div id="text-overlay"><div id="text" class="message"></div></div>
@@ -35,14 +43,16 @@
 
     <script>
         const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
         const textElement = document.getElementById('text');
-        let width, height, hearts = [], backgroundItems = [];
-        const messages = ["3", "2", "1", "Hôm nay là ngày đặc biệt của em...", "HAPPY BIRTHDAY CÚN IUUU 🎂", "Chúc em luôn xinh đẹp và hạnh phúc nhó", "Út Cún Cún :3 ❤️"];
+        
+        let width, height, hearts = [], items = [];
+        const messages = ["3", "2", "1", "Hôm nay là ngày đặc biệt của em...", "HAPPY BIRTHDAY CÚN IUUU 🎂", "Chúc em luôn xinh đẹp và hạnh phúc nhó", "Út Cún Cún ❤️"];
         let currentMsgIndex = 0, isFinalStage = false;
 
         function resize() {
-            const dpr = window.devicePixelRatio || 1;
+            // Khóa DPR ở mức 1.5 để cân bằng độ nét và tốc độ trên mobile
+            const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
             width = window.innerWidth;
             height = window.innerHeight;
             canvas.width = width * dpr;
@@ -50,27 +60,30 @@
             canvas.style.width = width + 'px';
             canvas.style.height = height + 'px';
             ctx.scale(dpr, dpr);
-            initItems();
+            
+            // Khởi tạo lại vật thể để phù hợp kích thước mới
+            initEntities();
         }
 
-        function initItems() {
+        function initEntities() {
             hearts = [];
-            for (let i = 0; i < 300; i++) {
+            // Giảm số lượng để mượt tuyệt đối nhưng tăng kích thước hạt
+            for (let i = 0; i < 200; i++) {
                 hearts.push({
-                    x: Math.random() * width, y: Math.random() * height,
-                    size: Math.random() * 8 + 10,
-                    angle: (i / 300) * Math.PI * 2,
-                    opacity: Math.random(),
-                    drift: Math.random() * 10 - 5
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    size: Math.random() * 5 + 15,
+                    angle: (i / 200) * Math.PI * 2,
+                    speed: Math.random() * 1 + 2
                 });
             }
-            backgroundItems = [];
-            for (let i = 0; i < 20; i++) {
-                backgroundItems.push({
-                    x: Math.random() * width, y: Math.random() * height,
-                    icon: ['🎂', '🌸', '🎁', '💖', '✨'][Math.floor(Math.random() * 5)],
-                    speed: Math.random() * 1.5 + 1.5,
-                    size: Math.random() * 18 + 15
+            items = [];
+            for (let i = 0; i < 15; i++) {
+                items.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    icon: ['🎂', '🌸', '🎁', '✨'][Math.floor(Math.random() * 4)],
+                    speed: Math.random() * 1 + 2
                 });
             }
         }
@@ -101,40 +114,43 @@
         }
 
         function animate() {
-            // Xóa sạch để hết sọc dọc
-            ctx.clearRect(0, 0, width, height);
+            // Vẽ nền đen đặc để GPU xử lý nhanh nhất
             ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, width, height);
 
-            backgroundItems.forEach(item => {
-                ctx.globalAlpha = 0.8;
-                ctx.font = `${item.size}px Arial`;
-                ctx.textAlign = "center";
+            // Vẽ các biểu tượng nền
+            ctx.font = '20px Arial';
+            ctx.textAlign = 'center';
+            items.forEach(item => {
                 ctx.fillText(item.icon, item.x, item.y);
                 item.y += item.speed;
-                if (item.y > height + 20) { item.y = -20; item.x = Math.random() * width; }
+                if (item.y > height + 20) item.y = -20;
             });
 
+            // Vẽ trái tim
+            ctx.font = '18px Arial';
+            const now = Date.now();
             hearts.forEach((h, i) => {
                 if (isFinalStage) {
-                    const scale = Math.min(width, height) / 38;
+                    const scale = Math.min(width, height) / 35;
                     const pos = getHeartPoint(h.angle, scale);
-                    h.x += (width/2 + pos.x + h.drift - h.x) * 0.12;
-                    h.y += (height/2 + pos.y + h.drift - h.y) * 0.12;
-                    h.opacity = 0.6 + Math.sin(Date.now() * 0.005 + i) * 0.4;
-                    ctx.shadowBlur = 12;
-                    ctx.shadowColor = "#ff1493";
+                    const destX = width / 2 + pos.x;
+                    const destY = height / 2 + pos.y;
+                    
+                    // Di chuyển mượt mà về đích
+                    h.x += (destX - h.x) * 0.1;
+                    h.y += (destY - h.y) * 0.1;
                 } else {
-                    h.y += 3;
-                    if (h.y > height) h.y = -20;
-                    ctx.shadowBlur = 0;
+                    h.y += h.speed;
+                    if (h.y > height + 20) h.y = -20;
                 }
-                ctx.globalAlpha = h.opacity;
-                ctx.font = `${h.size}px Arial`;
+                
+                // Hiệu ứng nhấp nháy bằng opacity (không tốn tài nguyên như shadow)
+                ctx.globalAlpha = 0.4 + Math.sin(now * 0.005 + i) * 0.4;
                 ctx.fillText("❤️", h.x, h.y);
             });
+
             ctx.globalAlpha = 1;
-            ctx.shadowBlur = 0;
             requestAnimationFrame(animate);
         }
 
